@@ -7,7 +7,7 @@
 
 // Load the source image. HighGUI use.
 IplImage* image1 = 0, * image2 = 0, *image3 = 0, *outputImage = 0;
-int x, y, average;
+int x, y, averageB, averageG, averageR;
 
 int main(int argc, char** argv)
 {
@@ -29,14 +29,27 @@ int main(int argc, char** argv)
 	
 	// average out three images for superresolution
 	for (x = 0; x < image1->height; x++) {
-		for (y = 0; y < image1->height; y++) {
-			average = 0;
-			average = average + (image1->imageData + image1->widthStep * x)[y];
-			average = average + (image2->imageData + image2->widthStep * x)[y];
-			average = average + (image3->imageData + image3->widthStep * x)[y];
-			average = average / 3;
+		for (y = 0; y < image1->width; y++) {
+			averageB = 0;
+			averageG = 0;
+			averageR = 0;
+			averageB = averageB + (image1->imageData + image1->widthStep * x)[y*3];
+			averageG = averageG + (image1->imageData + image1->widthStep * x)[y * 3+1];
+			averageR = averageR + (image1->imageData + image1->widthStep * x)[y * 3+2];
+			averageB = averageB + (image2->imageData + image2->widthStep * x)[y*3];
+			averageG = averageG + (image2->imageData + image2->widthStep * x)[y * 3+1];
+			averageR = averageR + (image2->imageData + image2->widthStep * x)[y * 3+2];
+			averageB = averageB + (image3->imageData + image3->widthStep * x)[y*3];
+			averageG = averageG + (image3->imageData + image3->widthStep * x)[y * 3+1];
+			averageR = averageR + (image3->imageData + image3->widthStep * x)[y * 3+2];
 
-			((uchar*)(outputImage->imageData + outputImage->widthStep * x))[y] = average;
+			averageB = averageB / 3;
+			averageG = averageG / 3;
+			averageR = averageR / 3;
+
+			((uchar*)(outputImage->imageData + outputImage->widthStep * x))[y*3] = averageB;
+			((uchar*)(outputImage->imageData + outputImage->widthStep * x))[y * 3+1] = averageG;
+			((uchar*)(outputImage->imageData + outputImage->widthStep * x))[y * 3+2] = averageR;
 		}
 	}
 
